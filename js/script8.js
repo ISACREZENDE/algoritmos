@@ -1,4 +1,9 @@
 // script.js
+/*
+    Obtém os blocos e transforma suas alturas em um array para facilitar a manipulação.
+    Aplica o algoritmo de Ordenação por Seleção para encontrar o menor valor e trocar as posições no array.
+    Usa setTimeout para criar uma animação, atualizando as alturas dos blocos gradualmente.
+ */
 
 // Função principal para ordenar os blocos
 function selectionSort() {
