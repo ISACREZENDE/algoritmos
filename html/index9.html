@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- css -->
+    <link rel="stylesheet" href="../css/style9.css">
+    <!-- JavaScript -->
+    <script src="../js/script9.js" defer></script>
+    
+    <title>Sequência de Fibonacci</title>
+    
+</head>
+<!-- 
+    Explicação do HTML:
+        O título da página é "Calculadora de Fibonacci".
+        foi criado um campo de entrada (<input>) para o usuário digitar o valor de N (número de meses).
+        Um botão chama a função calcularFibonacci() quando clicado.
+        A área onde o resultado será exibido está dentro de uma <div> com o id="resultado".
+-->
+<body>
+    <div class="container">
+        <h1>Calculadora de Fibonacci</h1>
+        <label for="nValue">Digite o número de meses (N):</label>
+        <input type="number" id="nValue" placeholder="Ex: 5" min="1">
+        <button onclick="calcularFibonacci()">Calcular</button>
+        <div id="resultado"></div>
+    </div>
+    
+</body>
+</html>
