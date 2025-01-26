@@ -1,48 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Labirinto com Backtracking</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    #labirinto {
-      display: grid;
-      grid-template-columns: repeat(5, 50px);
-      grid-gap: 2px;
-      justify-content: center;
-      margin: 20px auto;
-    }
-    .celula {
-      width: 50px;
-      height: 50px;
-      background-color: lightgray;
-      border: 1px solid #ccc;
-    }
-    .parede {
-      background-color: black;
-    }
-    .camino {
-      background-color: lightgreen;
-    }
-    .inicio {
-      background-color: blue;
-    }
-    .fim {
-      background-color: red;
-    }
-  </style>
-</head>
-<body>
-  <h1>Labirinto com Backtracking</h1>
-  <div id="labirinto"></div>
-  <button onclick="resolverLabirinto()">Resolver Labirinto</button>
-  <button onclick="reiniciar()">Reiniciar Labirinto</button>
-  <script>
-    let labirinto;
+let labirinto;
     let posX = 0; // Posição inicial X (linha)
     let posY = 0; // Posição inicial Y (coluna)
     let fimX = 4; // Posição final X
@@ -174,6 +130,3 @@
 
     // Inicializar
     reiniciar();
-  </script>
-</body>
-</html>
