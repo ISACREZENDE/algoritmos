@@ -8,212 +8,130 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
-    }
-  
-    #labirinto {
-      display: grid;
-      grid-template-columns: repeat(5, 50px);
-      grid-gap: 2px;
+      background-color: #f4f4f4;
+      display: flex;
       justify-content: center;
-      margin: 20px auto;
-    }
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+  }
   
-    .celula {
-      width: 50px;
-      height: 50px;
-      background-color: lightgray;
+  .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #tabuleiro {
+      display: grid;
+      margin-top: 20px;
+      gap: 2px;
+  }
+  
+  .celula {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ddd;
       border: 1px solid #ccc;
-    }
+  }
   
-    .parede {
-      background-color: black;
-    }
-  
-    .camino {
-      background-color: lightgreen;
-    }
-  
-    .inicio {
-      background-color: blue;
-    }
-  
-    .fim {
-      background-color: red;
-    }
-  
+  .rainha {
+      font-size: 24px;
+      color: #ff6347;
+  }
   </style>
   
 </head>
 <body>
-  <h1>Labirinto com Backtracking</h1>
-  <div id="labirinto"></div>
-  <button onclick="resolverLabirinto()">Resolver Labirinto</button>
-  <button onclick="reiniciar()">Reiniciar Labirinto</button> <!-- Novo botão -->
-
+  <div class="container">
+    <h1>Problema das N Rainhas</h1>
+    <label for="n">Tamanho do tabuleiro (N x N):</label>
+    <input type="number" id="n" min="1" max="10" value="8">
+    <button onclick="resolverProblema()">Resolver</button>
+    
+    <!-- Mensagem de carregamento -->
+    <div id="mensagem" class="mensagem"></div>
+    
+    <!-- Tabuleiro -->
+    <div id="tabuleiro"></div>
+</div>
   <script>
-    // Labirinto com paredes e caminhos
-    const labirintoOriginal = [
-      [0, 1, 0, 0, 0],
-      [0, 1, 0, 1, 0],
-      [0, 0, 0, 1, 0],
-      [1, 1, 0, 0, 0],
-      [0, 0, 0, 1, 0]
-    ];
-    let labirinto = JSON.parse(JSON.stringify(labirintoOriginal)); // Clone do labirinto para poder resetar
-
-    // Funções auxiliares
-    const direcoes = [
-      { x: 0, y: 1 }, // direita
-      { x: 1, y: 0 }, // baixo
-      { x: 0, y: -1 }, // esquerda
-      { x: -1, y: 0 } // cima
-    ];
-
-    let posX = 0; // Posição inicial X (linha)
-    let posY = 0; // Posição inicial Y (coluna)
-
-    const criarLabirinto = () => {
-      const container = document.getElementById("labirinto");
-      container.innerHTML = ''; // Limpar o labirinto anterior
-
-      for (let i = 0; i < labirinto.length; i++) {
-        for (let j = 0; j < labirinto[i].length; j++) {
-          const celula = document.createElement("div");
-          celula.classList.add("celula");
-
-          // Definir parede ou caminho
-          if (labirinto[i][j] === 1) {
-            celula.classList.add("parede");
+    function resolverProblema() {
+      const n = parseInt(document.getElementById('n').value);
+      const tabuleiro = document.getElementById('tabuleiro');
+      tabuleiro.innerHTML = ''; // Limpa o tabuleiro anterior
+  
+      // Cria um tabuleiro vazio (matriz N x N)
+      const matriz = Array.from({ length: n }, () => Array(n).fill(0));
+  
+      // Função para verificar se é seguro colocar uma rainha em uma posição
+      function ehSeguro(linha, coluna) {
+          // Verifica a coluna
+          for (let i = 0; i < linha; i++) {
+              if (matriz[i][coluna] === 1) return false;
           }
-
-          // Marcar o ponto de início (0,0) e fim (4,4)
-          if (i === 0 && j === 0) {
-            celula.classList.add("inicio");
-          } else if (i === 4 && j === 4) {
-            celula.classList.add("fim");
+  
+          // Verifica a diagonal superior esquerda
+          for (let i = linha, j = coluna; i >= 0 && j >= 0; i--, j--) {
+              if (matriz[i][j] === 1) return false;
           }
-
-          container.appendChild(celula);
-        }
-      }
-    };
-
-    // Função de Backtracking
-    const resolverLabirinto = () => {
-      const caminho = [];
-      if (backtracking(0, 0, caminho)) {
-        marcarCaminho(caminho);
-      } else {
-        alert("Não há solução!");
-      }
-
-      // Voltar a célula azul para o início após 3 segundos
-      setTimeout(() => {
-        posX = 0;
-        posY = 0;
-        atualizarPosicao();
-      }, 3000); // 3 segundos
-    };
-
-    // Função recursiva de backtracking
-    const backtracking = (x, y, caminho) => {
-      // Verificar se chegamos ao fim
-      if (x === 4 && y === 4) {
-        caminho.push({ x, y });
-        return true;
-      }
-
-      // Se a célula está fora dos limites ou é uma parede, retorna falso
-      if (x < 0 || y < 0 || x >= labirinto.length || y >= labirinto[0].length || labirinto[x][y] === 1) {
-        return false;
-      }
-
-      // Armazenar o valor original da célula
-      const valorOriginal = labirinto[x][y];
-
-      // Marcar como visitado
-      labirinto[x][y] = 1; // Marcar o caminho como parede temporariamente
-
-      // Tentar todas as direções
-      for (const dir of direcoes) {
-        const novaX = x + dir.x;
-        const novaY = y + dir.y;
-        
-        if (backtracking(novaX, novaY, caminho)) {
-          caminho.push({ x, y });
+  
+          // Verifica a diagonal superior direita
+          for (let i = linha, j = coluna; i >= 0 && j < n; i--, j++) {
+              if (matriz[i][j] === 1) return false;
+          }
+  
           return true;
-        }
       }
-
-      // Restaurar o valor original da célula
-      labirinto[x][y] = valorOriginal;
-
-      return false;
-    };
-
-    // Marcar o caminho no labirinto
-    const marcarCaminho = (caminho) => {
-      const container = document.getElementById("labirinto");
-      const celulas = container.getElementsByClassName("celula");
-
-      // Resetar as células
-      for (const celula of celulas) {
-        celula.classList.remove("camino");
+  
+      // Função recursiva para resolver o problema
+      function resolver(linha) {
+          if (linha >= n) return true; // Todas as rainhas foram colocadas
+  
+          for (let coluna = 0; coluna < n; coluna++) {
+              if (ehSeguro(linha, coluna)) {
+                  matriz[linha][coluna] = 1; // Coloca a rainha
+  
+                  // Tenta resolver para a próxima linha
+                  if (resolver(linha + 1)) return true;
+  
+                  matriz[linha][coluna] = 0; // Remove a rainha (backtracking)
+              }
+          }
+  
+          return false; // Não há solução para esta configuração
       }
-
-      // Marcar o caminho
-      for (const passo of caminho.reverse()) {
-        const index = passo.x * 5 + passo.y; // Calcular o índice da célula no labirinto
-        celulas[index].classList.add("camino");
+  
+      // Tenta resolver o problema a partir da primeira linha
+      if (resolver(0)) {
+          // Exibe o tabuleiro com as rainhas
+          tabuleiro.style.gridTemplateColumns = `repeat(${n}, 40px)`;
+          for (let i = 0; i < n; i++) {
+              for (let j = 0; j < n; j++) {
+                  const celula = document.createElement('div');
+                  celula.classList.add('celula');
+                  if (matriz[i][j] === 1) {
+                      celula.innerHTML = '♕';
+                      celula.classList.add('rainha');
+                  }
+                  tabuleiro.appendChild(celula);
+              }
+          }
+  
+          // Volta ao início após 3 segundos
+          setTimeout(() => {
+              tabuleiro.innerHTML = ''; // Limpa o tabuleiro
+              document.getElementById('n').value = ''; // Limpa o campo de entrada
+          }, 3000); // 3000 milissegundos = 3 segundos
+      } else {
+          alert('Não há solução para este tamanho de tabuleiro.');
       }
-    };
-
-    // Atualiza a posição da célula azul
-    const atualizarPosicao = () => {
-      const container = document.getElementById("labirinto");
-      const celulas = container.getElementsByClassName("celula");
-
-      // Limpar a célula azul anterior
-      for (const celula of celulas) {
-        celula.classList.remove("inicio");
-      }
-
-      // Atualizar a célula azul
-      const index = posX * 5 + posY;
-      celulas[index].classList.add("inicio");
-    };
-
-    // Função de reinício
-    const reiniciar = () => {
-      // Resetar labirinto e posição da célula azul
-      labirinto = JSON.parse(JSON.stringify(labirintoOriginal));
-      posX = 0;
-      posY = 0;
-
-      // Recriar labirinto e reposicionar a célula azul
-      criarLabirinto();
-      atualizarPosicao();
-    };
-
-    // Capturar teclas do teclado
-    document.addEventListener("keydown", (evento) => {
-      if (evento.key === "ArrowUp" && posX > 0 && labirinto[posX - 1][posY] !== 1) {
-        posX--;
-      } else if (evento.key === "ArrowDown" && posX < labirinto.length - 1 && labirinto[posX + 1][posY] !== 1) {
-        posX++;
-      } else if (evento.key === "ArrowLeft" && posY > 0 && labirinto[posX][posY - 1] !== 1) {
-        posY--;
-      } else if (evento.key === "ArrowRight" && posY < labirinto[0].length - 1 && labirinto[posX][posY + 1] !== 1) {
-        posY++;
-      }
-
-      // Atualizar a posição da célula azul
-      atualizarPosicao();
-    });
-
-    // Inicializar
-    criarLabirinto();
+  }
   </script>
 </body>
 </html>
